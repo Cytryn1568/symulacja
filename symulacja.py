@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 """Program do symulacji rozprzestrzeniania choroby w populacji
-
 Kod do wykorzystania na zajęciach 01.04.2020
 """
 
 import random
-
+from math import sqrt
 
 class Pacjent:
     """Pojedyncza osoba w symulacji. 
@@ -40,9 +39,8 @@ class Pacjent:
         
     def __str__(self):
         return "Pacjent " + self.status + " @ "  + str(self.x) + " x " + str(self.y)
-        
     
-    
+
 class Populacja:
     """Zbiór Pacjentów w ograniczonym obszarze przestrzeni
     
@@ -82,3 +80,19 @@ class Populacja:
             p.ruch()
             p.x = p.x % self.szerokosc
             p.y = p.y % self.wysokosc
+            self.zaraza()
+    
+    def zaraza(self):
+        for p in self._pacjenci:
+            if p.status == 'zdrowy':
+                for p2 in self._pacjenci:
+                    zarazi = random.choices( [True, False], [1, 99] )[0]
+                    dystans = sqrt( (p.x - p2.x)**2 + (p.y - p2.y)**2 )
+                    if dystans>0 and dystans<5 and p2.status == 'chory' and zarazi:
+                        p.status = 'chory'
+                        break
+    
+    def zapisz(self,nazwa_pliku):
+        fout = open(nazwa_pliku,'w')
+        fout.write(str(self))
+        fout.close()
