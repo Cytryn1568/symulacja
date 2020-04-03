@@ -83,6 +83,8 @@ class Populacja:
             self.zaraza()
     
     def zaraza(self):
+        """ sprawdz czy blisko pacjenta nie ma chorego i zaraz go 
+        z odpowienim prawdopodobienstwem"""
         for p in self._pacjenci:
             if p.status == 'zdrowy':
                 for p2 in self._pacjenci:
