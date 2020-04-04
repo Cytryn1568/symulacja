@@ -94,6 +94,18 @@ class Populacja:
                         p.status = 'chory'
                         break
     
+    def zmiana_wymiarow(self, wysokosc, szerokosc):
+        """ Podaj nową wysokosc i szerokosc szpitala - zmienimy jego wymiary.
+        Jesli którys z pacjentów znajduje się poza jego granicami,
+        sprowadzimy go na granicę."""
+        for p in self._pacjenci:
+            if p.x>szerokosc:
+                p.x=float(szerokosc)
+            if p.y>wysokosc:
+                p.y=float(wysokosc)
+        self.wysokosc=wysokosc
+        self.szerokosc=szerokosc
+    
     def zapisz(self,nazwa_pliku):
         fout = open(nazwa_pliku,'w')
         fout.write(str(self))
