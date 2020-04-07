@@ -66,11 +66,7 @@ class Pacjent:
             
             zdrowy = random.choices( [True, False], [80, 20] )[0]
             self._pacjenci.append( Pacjent(x, y, zdrowy) )
-            if self.status == 'chory':
-                predkosc_max = 0.1
-            else:
-                predkosc_max = 1
-            v_x = random.uniform(-predkosc_max, predkosc_max)
-            v_y = random.uniform(-sqrt(predkosc_max**2 - v_x**2), sqrt(predkosc_max**2 - v_x**2))
+            v_x = random.uniform(-0.1, 0.1)
+            v_y = random.uniform(-sqrt(0.01 - v_x**2), sqrt(0.01 - v_x**2))
             self._pacjenci.append( Pacjent(x, y, v_x, v_y, zdrowy) )
     
