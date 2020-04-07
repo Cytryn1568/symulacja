@@ -19,9 +19,11 @@ class Pacjent:
     
     """
     
-    def __init__(self, x=0, y=0, status = 'zdrowy', tura = 0):
+    def __init__(self, x=0, y=0, v_x = 0, v_y = 0, status = 'zdrowy', tura = 0):
         self.x = x
         self.y = y
+        self.v_x = v_x
+        self.v_y = v_y
         self.set_status(status)
         self.tura = tura
             
@@ -37,17 +39,25 @@ class Pacjent:
             
     def ruch(self):
         """Wykonaj ruch zmieniając współrzędne x,y.
-        
-        Zdrowy pacjent przesuwa się o 0-1, a chory o 0-0.1"""
-        if self.status == 'chory':
-            zasieg = 0.1
-        else:
-            zasieg = 1
-        self.x = self.x + random.uniform(-zasieg, zasieg)
-        self.y = self.y + random.uniform(-zasieg, zasieg)
+        Zdrowy pacjent przesuwa się z prędkością  
+        z zakresu z 0-1 i przyspieszeniem z 0-0.1, a chory z prędkością z 0-0.1 
+        i przyspieszeniem z 0-0.01."""
+      
         if self.status == 'chory':
             self.tura = self.tura + 1
-        
+            predkosc_max = 0.1
+        else:
+            predkosc_max = 1
+        zmiana_v_x = random.uniform(-predkosc_max/10, predkosc_max/10)
+        zmiana_v_y = random.uniform(-predkosc_max/10, predkosc_max/10)
+        if (float(self.v_x) + float(zmiana_v_x))**2 + (float(self.v_y) + float(zmiana_v_y))**2 > predkosc_max**2:
+            self.v_x = self.v_x
+            self.v_y = self.v_y
+        else:
+            self.v_x = self.v_x + zmiana_v_x 
+            self.v_y = self.v_y + zmiana_v_y
+        self.x = self.x + self.v_x
+        self.y = self.y + self.v_y
         
     def __str__(self):
         return "Pacjent " + self.status + " @ "  + str(self.x) + " x " + str(self.y) + " @ " + str(self.tura)
@@ -77,8 +87,11 @@ class Populacja:
         for i in range(n):
             x = random.uniform(0, szerokosc)
             y = random.uniform(0, wysokosc)
+            
             zdrowy = random.choices( ['zdrowy', 'chory'], [80, 20] )[0]
-            self._pacjenci.append( Pacjent(x, y, zdrowy) )
+            v_x = random.uniform(-0.1, 0.1)
+            v_y = random.uniform(-sqrt(0.01 - v_x**2), sqrt(0.01 - v_x**2))
+            self._pacjenci.append( Pacjent(x, y, v_x, v_y, zdrowy, 0) )
     
     def __str__(self):
         s = ""
