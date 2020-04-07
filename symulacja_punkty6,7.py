@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Program do symulacji rozprzestrzeniania choroby w populacji
-Kod do wykorzystania na zajęciach 01.04.2020
-"""
-
-import random
-from math import sqrt
-
 class Pacjent:
     """Pojedyncza osoba w symulacji. 
     
@@ -47,13 +39,7 @@ class Pacjent:
             self.v_y = self.v_y + zmiana_v_y
         self.x = self.x + self.v_x
         self.y = self.y + self.v_y
-        
-        
-    def __str__(self):
-        return "Pacjent " + self.status + " @ "  + str(self.x) + " x " + str(self.y)
-    
-
-class Populacja:
+        class Populacja:
     """Zbiór Pacjentów w ograniczonym obszarze przestrzeni
     
     Atrybuty:
@@ -87,45 +73,4 @@ class Populacja:
             v_x = random.uniform(-predkosc_max, predkosc_max)
             v_y = random.uniform(-sqrt(predkosc_max**2 - v_x**2), sqrt(predkosc_max**2 - v_x**2))
             self._pacjenci.append( Pacjent(x, y, v_x, v_y, zdrowy) )
-    def __str__(self):
-        s = ""
-        for p in self._pacjenci:
-            s += str(p) + "\n"
-        return s
     
-    def ruch(self):
-        """ Wykonaj ruch przesuwając każdego z pacjentów"""
-        for p in self._pacjenci:
-            p.ruch()
-            p.x = p.x % self.szerokosc
-            p.y = p.y % self.wysokosc
-            self.zaraza()
-    
-    def zaraza(self):
-        """ sprawdz czy blisko pacjenta nie ma chorego i zaraz go 
-        z odpowienim prawdopodobienstwem"""
-        for p in self._pacjenci:
-            if p.status == 'zdrowy':
-                for p2 in self._pacjenci:
-                    zarazi = random.choices( [True, False], [1, 99] )[0]
-                    dystans = sqrt( (p.x - p2.x)**2 + (p.y - p2.y)**2 )
-                    if dystans>0 and dystans<5 and p2.status == 'chory' and zarazi:
-                        p.status = 'chory'
-                        break
-    
-    def zmiana_wymiarow(self, wysokosc, szerokosc):
-        """ Podaj nową wysokosc i szerokosc szpitala - zmienimy jego wymiary.
-        Jesli którys z pacjentów znajduje się poza jego granicami,
-        sprowadzimy go na granicę."""
-        for p in self._pacjenci:
-            if p.x>szerokosc:
-                p.x=float(szerokosc)
-            if p.y>wysokosc:
-                p.y=float(wysokosc)
-        self.wysokosc=wysokosc
-        self.szerokosc=szerokosc
-    
-    def zapisz(self,nazwa_pliku):
-        fout = open(nazwa_pliku,'w')
-        fout.write(str(self))
-        fout.close()
