@@ -12,17 +12,27 @@ class Pacjent:
     Atrybuty:
         x (float): współrzędna x pozycji Pacjenta
         y (float): współrzędna y pozycji Pacjenta
-        status (str): status ze zbioru 'zdrowy', 'chory', 'nosiciel'
+        v_x (float): prędkość Pacjenta w kierunku x
+        v_y (float): prędkość Pacjenta w kierunku y
+        status (str): status ze zbioru 'zdrowy', 'chory', 'nosiciel', 'wyleczony'
+        tura: ilosc tur przez ktore byl chory
     
     """
     
-    def __init__(self, x=0, y=0, czy_zdrowy=True):
+    def __init__(self, x=0, y=0, status = 'zdrowy', tura = 0):
         self.x = x
         self.y = y
-        if czy_zdrowy:
-            self.status = 'zdrowy'
-        else:
-            self.status = 'chory'
+        self.set_status(status)
+        self.tura = tura
+            
+    def get_status(self):
+        return self.set_status
+    
+    def set_status(self,wartosc):
+        """ uzytkownik programu moze nadac pacjentowi tylko status z listy """
+        if wartosc not in ['zdrowy', 'chory', 'nosiciel', 'wyleczony']:
+            raise ValueError("Nie ma takiego statusu")
+        self.status = wartosc
             
             
     def ruch(self):
@@ -35,10 +45,12 @@ class Pacjent:
             zasieg = 1
         self.x = self.x + random.uniform(-zasieg, zasieg)
         self.y = self.y + random.uniform(-zasieg, zasieg)
+        if self.status == 'chory':
+            self.tura = self.tura + 1
         
         
     def __str__(self):
-        return "Pacjent " + self.status + " @ "  + str(self.x) + " x " + str(self.y)
+        return "Pacjent " + self.status + " @ "  + str(self.x) + " x " + str(self.y) + " @ " + str(self.tura)
     
 
 class Populacja:
@@ -65,7 +77,7 @@ class Populacja:
         for i in range(n):
             x = random.uniform(0, szerokosc)
             y = random.uniform(0, wysokosc)
-            zdrowy = random.choices( [True, False], [80, 20] )[0]
+            zdrowy = random.choices( ['zdrowy', 'chory'], [80, 20] )[0]
             self._pacjenci.append( Pacjent(x, y, zdrowy) )
     
     def __str__(self):
@@ -81,6 +93,7 @@ class Populacja:
             p.x = p.x % self.szerokosc
             p.y = p.y % self.wysokosc
             self.zaraza()
+            self.wyzdrowienia()
     
     def zaraza(self):
         """ sprawdz czy blisko pacjenta nie ma chorego i zaraz go 
@@ -88,11 +101,17 @@ class Populacja:
         for p in self._pacjenci:
             if p.status == 'zdrowy':
                 for p2 in self._pacjenci:
-                    zarazi = random.choices( [True, False], [1, 99] )[0]
+                    zarazi = random.choices( [True, False], [50, 50] )[0]
                     dystans = sqrt( (p.x - p2.x)**2 + (p.y - p2.y)**2 )
-                    if dystans>0 and dystans<5 and p2.status == 'chory' and zarazi:
+                    if dystans>0 and dystans<20 and p2.status == 'chory' and zarazi:
                         p.status = 'chory'
                         break
+                    
+    def wyzdrowienia(self):
+        """ kto byl chory x tur wyzdrowieje """
+        for p in self._pacjenci:
+            if p.tura >= 10 and p.status == 'chory':
+                p.status = 'wyleczony'
     
     def zmiana_wymiarow(self, wysokosc, szerokosc):
         """ Podaj nową wysokosc i szerokosc szpitala - zmienimy jego wymiary.
