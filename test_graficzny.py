@@ -12,17 +12,17 @@ matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-#from symulacja import Populacja cos nie tak
+#from symulacja import Populacja #cos nie tak
 import symulacja
 
 pop = Populacja(20)
 
 fig, ax = plt.subplots()
 
-#ty gdzies zmienic wykresy na wykres?
 wykresy = { 'zdrowy' : plt.plot([],[],'go')[0],
            'chory' : plt.plot([],[],'ro')[0],
            'nosiciel' : plt.plot([],[],'yo')[0],
+           'wyleczony' : plt.plot([],[],'bo')[0],
            }
 #ln, = plt.plot([], [], 'ro')
 
