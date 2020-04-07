@@ -20,11 +20,12 @@ fig, (ax1, ax2) = plt.subplots(1, 2)
 wykresy = { 'zdrowy' : ax1.plot([],[],'go')[0],
            'chory' : ax1.plot([],[],'ro')[0],
            'nosiciel' : ax1.plot([],[],'yo')[0],
+           'wyleczony' : ax1.plot([],[],'bo')[0]
            }
 
 kolo = plt.pie([], labels=[], autopct='%1.1f%%',
         shadow=True, startangle=90)
-kolo_dane = {'zdrowy': 0, 'chory': 0, 'nosiciel': 0}
+kolo_dane = {'zdrowy': 0, 'chory': 0, 'nosiciel': 0, 'wyleczony': 0}
 
 def init():
     ax1.set_xlim(0, pop.szerokosc)
@@ -43,16 +44,19 @@ def update(frame):
     kolo_dane['zdrowy']=0
     kolo_dane['chory']=0
     kolo_dane['nosiciel']=0
+    kolo_dane['wyleczony']=0
     for p in pop._pacjenci:
         if p.status == 'zdrowy':
             kolo_dane['zdrowy']+=1
         elif p.status == 'chory':
             kolo_dane['chory']+=1
-        else:
+        elif p.status == 'nosiciel':
             kolo_dane['nosiciel']+=1
+        else:
+            kolo_dane['wyleczony']+=1
     for status,liczba in kolo_dane.items():
         liczba=liczba*100/len(pop._pacjenci)
-    kolo = plt.pie(kolo_dane.values(), labels=kolo_dane.keys(), colors=['g', 'r', 'y'],
+    kolo = plt.pie(kolo_dane.values(), labels=kolo_dane.keys(), colors=['g', 'r', 'y', 'b'],
                    autopct='%1.1f%%', shadow=True, startangle=90)
     return wykresy.values(), kolo
 
